@@ -1,0 +1,22 @@
+[
+  {"id": 1, "dimension": "EI", "text": "参加朋友聚会时，你通常会？", "options": [{"text": "与很多人交流互动，感到精力充沛", "score": "E"}, {"text": "与少数几个熟人深入聊天，享受小圈子氛围", "score": "I"}]},
+  {"id": 2, "dimension": "EI", "text": "周末休息时，你更倾向于？", "options": [{"text": "约朋友出去玩，参加社交活动", "score": "E"}, {"text": "一个人宅在家里看书、看电影或打游戏", "score": "I"}]},
+  {"id": 3, "dimension": "EI", "text": "面对一个需要团队合作的项目，你更习惯？", "options": [{"text": "主动发起讨论，边聊边形成思路", "score": "E"}, {"text": "先独自思考清楚，再和团队分享想法", "score": "I"}]},
+  {"id": 4, "dimension": "EI", "text": "在陌生环境中认识新人，你的感受是？", "options": [{"text": "觉得很有趣，很快就能融入其中", "score": "E"}, {"text": "需要一点时间适应，不会主动搭话", "score": "I"}]},
+  {"id": 5, "dimension": "EI", "text": "当你感到疲惫或压力大时，恢复精力的方式是？", "options": [{"text": "和朋友倾诉、出去玩，从外界获得能量", "score": "E"}, {"text": "独处静思或沉浸在自己的爱好中", "score": "I"}]},
+  {"id": 6, "dimension": "SN", "text": "你在阅读一本书时，更关注？", "options": [{"text": "具体的故事情节、细节描写和实际信息", "score": "S"}, {"text": "背后的主题、隐喻和抽象思想", "score": "N"}]},
+  {"id": 7, "dimension": "SN", "text": "学习新知识时，你更喜欢？", "options": [{"text": "从实际案例入手，逐步归纳出规律", "score": "S"}, {"text": "先理解整体框架和理论，再填充细节", "score": "N"}]},
+  {"id": 8, "dimension": "SN", "text": "描述一件事情时，你通常？", "options": [{"text": "按照发生的顺序，详细描述每个步骤", "score": "S"}, {"text": "跳跃式地表达核心意思，不太在意细节顺序", "score": "N"}]},
+  {"id": 9, "dimension": "SN", "text": "面对一个新问题，你的第一反应是？", "options": [{"text": "参考过去的经验和已知的方法", "score": "S"}, {"text": "脑洞大开，尝试找到全新的解决思路", "score": "N"}]},
+  {"id": 10, "dimension": "SN", "text": "旅行时，你更享受？", "options": [{"text": "按照详细攻略打卡景点，享受真实的感官体验", "score": "S"}, {"text": "随性探索，感受氛围，想象这个地方的历史与故事", "score": "N"}]},
+  {"id": 11, "dimension": "TF", "text": "朋友向你倾诉烦恼时，你通常会？", "options": [{"text": "先共情安慰，理解ta的情绪感受", "score": "F"}, {"text": "分析问题原因，帮ta找到解决方案", "score": "T"}]},
+  {"id": 12, "dimension": "TF", "text": "做重要决定时，你更依赖？", "options": [{"text": "客观事实、数据和逻辑分析", "score": "T"}, {"text": "内心价值观和这个决定对人的影响", "score": "F"}]},
+  {"id": 13, "dimension": "TF", "text": "在工作中收到批评意见，你的第一反应是？", "options": [{"text": "冷静评估批评是否客观合理，有则改之", "score": "T"}, {"text": "心里不太舒服，会考虑对方是不是对自己有意见", "score": "F"}]},
+  {"id": 14, "dimension": "TF", "text": "团队中有人和人发生冲突，你更倾向于？", "options": [{"text": "客观分析冲突原因，提出公平的解决方案", "score": "T"}, {"text": "调和双方情绪，维护团队和谐比谁对谁错重要", "score": "F"}]},
+  {"id": 15, "dimension": "TF", "text": "以下哪种评价更让你开心？", "options": [{"text": "\"你真的很聪明，分析问题逻辑清晰\"", "score": "T"}, {"text": "\"你真的很温暖，和你相处很舒服\"", "score": "F"}]},
+  {"id": 16, "dimension": "JP", "text": "面对一项任务，你的工作方式是？", "options": [{"text": "制定详细计划，按步骤稳步推进", "score": "J"}, {"text": "保持灵活，根据情况随时调整方向", "score": "P"}]},
+  {"id": 17, "dimension": "JP", "text": "关于日常生活的安排，你更接近？", "options": [{"text": "喜欢有计划、有条理的生活，习惯列清单", "score": "J"}, {"text": "随遇而安，不太喜欢被计划束缚", "score": "P"}]},
+  {"id": 18, "dimension": "JP", "text": "团队项目快到截止日期时，你通常会？", "options": [{"text": "提前完成大部分工作，留出时间检查和完善", "score": "J"}, {"text": "在截止前冲刺完成，最后一刻的灵感往往不错", "score": "P"}]},
+  {"id": 19, "dimension": "JP", "text": "你的桌面或房间通常是？", "options": [{"text": "整洁有序，东西放在固定位置", "score": "J"}, {"text": "有些凌乱，但自己知道东西在哪", "score": "P"}]},
+  {"id": 20, "dimension": "JP", "text": "有人临时改变约定好的计划，你会？", "options": [{"text": "感到烦躁不安，不喜欢计划被打乱", "score": "J"}, {"text": "无所谓，灵活应变也是一种乐趣", "score": "P"}]}
+]

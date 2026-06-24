@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 测试管理后台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f6fa; color: #2d3436; min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff; padding: 24px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 24px; font-weight: 600; }
+        .header p { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+        .container { max-width: 800px; margin: 32px auto; padding: 0 16px; }
+        .card {
+            background: #fff; border-radius: 12px; padding: 28px; margin-bottom: 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .card h2 { font-size: 18px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .card p.desc { font-size: 13px; color: #636e72; margin-bottom: 20px; }
+        .upload-area {
+            border: 2px dashed #dfe6e9; border-radius: 8px; padding: 32px;
+            text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .upload-area:hover { border-color: #667eea; background: #f8f9ff; }
+        .upload-area .icon { font-size: 36px; margin-bottom: 8px; }
+        .upload-area p { font-size: 14px; color: #636e72; }
+        .upload-area .hint { font-size: 12px; color: #b2bec3; margin-top: 4px; }
+        input[type="file"] { display: none; }
+        .btn {
+            display: inline-block; padding: 10px 24px; border: none; border-radius: 6px;
+            font-size: 14px; cursor: pointer; transition: all 0.2s; font-weight: 500;
+        }
+        .btn-primary { background: #667eea; color: #fff; }
+        .btn-primary:hover { background: #5a6fd6; }
+        .btn-primary:disabled { background: #b2bec3; cursor: not-allowed; }
+        .file-info {
+            display: none; margin-top: 12px; padding: 10px 14px; background: #f8f9fa;
+            border-radius: 6px; font-size: 13px; color: #636e72;
+        }
+        .file-info.show { display: flex; justify-content: space-between; align-items: center; }
+        .toast {
+            position: fixed; top: 16px; right: 16px; padding: 12px 20px; border-radius: 8px;
+            font-size: 14px; color: #fff; z-index: 1000; display: none; animation: slideIn 0.3s ease;
+        }
+        .toast.success { background: #00b894; }
+        .toast.error { background: #d63031; }
+        .toast.show { display: block; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @media (max-width: 600px) {
+            .container { margin: 16px auto; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>MBTI 测试管理后台</h1>
+        <p>上传题库和结果页配置</p>
+    </div>
+
+    <div class="container">
+        <!-- 题库上传 -->
+        <div class="card">
+            <h2>题库管理</h2>
+            <p class="desc">上传 JSON 格式的题库文件，替换当前题库。题目需包含 id、dimension、text、options 字段。</p>
+            <div class="upload-area" id="questionUploadArea">
+                <div class="icon">📄</div>
+                <p>点击或拖拽上传题库 JSON</p>
+                <p class="hint">仅支持 .json 文件</p>
+            </div>
+            <input type="file" id="questionFileInput" accept=".json">
+            <div class="file-info" id="questionFileInfo">
+                <span id="questionFileName"></span>
+                <button class="btn btn-primary" id="uploadQuestionBtn">上传</button>
+            </div>
+        </div>
+
+        <!-- 结果配置上传 -->
+        <div class="card">
+            <h2>结果页配置</h2>
+            <p class="desc">上传 JSON 格式的结果配置文件，替换当前 16 种 MBTI 类型的描述信息。</p>
+            <div class="upload-area" id="resultUploadArea">
+                <div class="icon">📄</div>
+                <p>点击或拖拽上传结果配置 JSON</p>
+                <p class="hint">仅支持 .json 文件</p>
+            </div>
+            <input type="file" id="resultFileInput" accept=".json">
+            <div class="file-info" id="resultFileInfo">
+                <span id="resultFileName"></span>
+                <button class="btn btn-primary" id="uploadResultBtn">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function showToast(message, type) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "toast " + type + " show";
+            setTimeout(() => { toast.className = "toast"; }, 3000);
+        }
+
+        function setupUpload(cardId, inputId, fileInfoId, fileNameId, btnId, endpoint) {
+            const area = document.getElementById(cardId);
+            const input = document.getElementById(inputId);
+            const fileInfo = document.getElementById(fileInfoId);
+            const fileName = document.getElementById(fileNameId);
+            const btn = document.getElementById(btnId);
+
+            area.addEventListener("click", () => input.click());
+            area.addEventListener("dragover", (e) => { e.preventDefault(); area.style.borderColor = "#667eea"; });
+            area.addEventListener("dragleave", () => { area.style.borderColor = "#dfe6e9"; });
+            area.addEventListener("drop", (e) => {
+                e.preventDefault();
+                area.style.borderColor = "#dfe6e9";
+                if (e.dataTransfer.files.length) {
+                    input.files = e.dataTransfer.files;
+                    input.dispatchEvent(new Event("change"));
+                }
+            });
+            input.addEventListener("change", () => {
+                if (input.files.length) {
+                    fileName.textContent = input.files[0].name;
+                    fileInfo.classList.add("show");
+                }
+            });
+            btn.addEventListener("click", () => {
+                const file = input.files[0];
+                if (!file) { showToast("请先选择文件", "error"); return; }
+                btn.disabled = true;
+                btn.textContent = "上传中...";
+                const formData = new FormData();
+                formData.append("file", file);
+                fetch(endpoint, { method: "POST", body: formData })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.code === 0) {
+                            showToast(data.message, "success");
+                            fileInfo.classList.remove("show");
+                            input.value = "";
+                        } else {
+                            showToast(data.message, "error");
+                        }
+                    })
+                    .catch(() => showToast("网络错误，请重试", "error"))
+                    .finally(() => { btn.disabled = false; btn.textContent = "上传"; });
+            });
+        }
+
+        setupUpload("questionUploadArea", "questionFileInput", "questionFileInfo", "questionFileName", "uploadQuestionBtn", "/api/admin/upload-questions");
+        setupUpload("resultUploadArea", "resultFileInput", "resultFileInfo", "resultFileName", "uploadResultBtn", "/api/admin/upload-results");
+    </script>
+</body>
+</html>

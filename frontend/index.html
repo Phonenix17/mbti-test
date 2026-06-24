@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 性格测试</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd6;
+            --bg: #f0f2f8;
+            --card-bg: #fff;
+            --text: #2d3436;
+            --text-secondary: #636e72;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .container {
+            width: 100%; max-width: 640px; padding: 20px;
+        }
+        /* 进度条 */
+        .progress-wrap {
+            background: #dde3ed; border-radius: 8px; height: 6px; margin-bottom: 24px; overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 8px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-text {
+            text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 6px;
+        }
+        /* 卡片 */
+        .card {
+            background: var(--card-bg); border-radius: 16px; padding: 36px 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06); min-height: 360px;
+            display: flex; flex-direction: column; justify-content: center;
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .question-number {
+            font-size: 13px; color: var(--primary); font-weight: 600; margin-bottom: 16px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .question-text {
+            font-size: 20px; font-weight: 600; line-height: 1.5; margin-bottom: 28px;
+            color: var(--text);
+        }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            padding: 16px 20px; border: 1.5px solid var(--border); border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; font-size: 15px; line-height: 1.4;
+            position: relative;
+        }
+        .option:hover { border-color: var(--primary); background: #f8f9ff; }
+        .option:active { transform: scale(0.98); }
+        /* 开始页 */
+        .start-page { text-align: center; }
+        .start-page .icon { font-size: 56px; margin-bottom: 12px; }
+        .start-page h2 { font-size: 26px; margin-bottom: 8px; }
+        .start-page p { color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px; font-size: 14px; }
+        .btn-start {
+            display: inline-block; padding: 14px 48px; border: none; border-radius: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-start:hover { opacity: 0.9; }
+        .btn-start:active { transform: scale(0.97); }
+        /* 结果页 */
+        .result-page { text-align: center; }
+        .result-type {
+            font-size: 48px; font-weight: 800; letter-spacing: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 4px;
+        }
+        .result-title { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+        .result-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .result-section { text-align: left; margin-top: 16px; }
+        .result-section h3 { font-size: 15px; margin-bottom: 10px; color: var(--primary); }
+        .traits { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .trait-tag {
+            padding: 6px 16px; background: #f0f2ff; border-radius: 20px;
+            font-size: 13px; color: #4a5cd4; font-weight: 500;
+        }
+        .suitable-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .suitable-tag {
+            padding: 6px 14px; background: #f5f6fa; border-radius: 6px;
+            font-size: 13px; color: var(--text-secondary);
+        }
+        .btn-retry {
+            margin-top: 24px; padding: 12px 36px; border: 1.5px solid var(--primary);
+            background: #fff; color: var(--primary); border-radius: 30px;
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-retry:hover { background: #f8f9ff; }
+        /* Loading */
+        .loading { text-align: center; padding: 60px 0; }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid #e2e8f0;
+            border-top-color: var(--primary); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* 移动端适配 */
+        @media (max-width: 480px) {
+            .container { padding: 12px; }
+            .card { padding: 24px 20px; border-radius: 12px; }
+            .question-text { font-size: 18px; }
+            .option { padding: 14px 16px; font-size: 14px; }
+            .result-type { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app"></div>
+
+    <script>
+        const app = document.getElementById("app");
+        const API_BASE = "";
+
+        let questions = [];
+        let currentIndex = 0;
+        let answers = {};
+
+        // 状态渲染
+        function render(html) {
+            app.innerHTML = html;
+        }
+
+        // 加载题库
+        async function loadQuestions() {
+            try {
+                const res = await fetch(API_BASE + "/api/questions");
+                const json = await res.json();
+                if (json.code === 0 && json.data.length) {
+                    questions = json.data;
+                } else {
+                    throw new Error("题库为空");
+                }
+            } catch (e) {
+                render(`<div class="card"><div class="start-page"><p style="color:#d63031;">题库加载失败，请确保后端服务已启动。</p></div></div>`);
+            }
+        }
+
+        // 开始页
+        function showStart() {
+            render(`
+                <div class="card">
+                    <div class="start-page">
+                        <div class="icon">🧠</div>
+                        <h2>MBTI 性格测试</h2>
+                        <p>共 ${questions.length} 道题，大约需要 5 分钟。<br>请根据真实感受作答，没有对错之分。</p>
+                        <button class="btn-start" onclick="startTest()">开始测试</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 开始答题
+        function startTest() {
+            currentIndex = 0;
+            answers = {};
+            showQuestion();
+        }
+
+        // 显示题目
+        function showQuestion() {
+            if (currentIndex >= questions.length) {
+                submitAnswers();
+                return;
+            }
+            const q = questions[currentIndex];
+            const progress = Math.round(((currentIndex + 1) / questions.length) * 100);
+
+            let optionsHtml = q.options.map((opt, i) =>
+                `<div class="option" onclick="selectAnswer(${q.id}, '${opt.score}')">${opt.text}</div>`
+            ).join("");
+
+            render(`
+                <div class="progress-wrap">
+                    <div class="progress-bar" style="width: ${progress}%"></div>
+                </div>
+                <div class="progress-text">${currentIndex + 1} / ${questions.length}</div>
+                <div class="card">
+                    <div class="question-number">第 ${currentIndex + 1} 题</div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="options">${optionsHtml}</div>
+                </div>
+            `);
+        }
+
+        // 选择答案
+        function selectAnswer(questionId, score) {
+            answers[questionId] = score;
+            currentIndex++;
+            // 延迟切换，让用户看到点击反馈
+            setTimeout(() => showQuestion(), 150);
+        }
+
+        // 提交答案
+        async function submitAnswers() {
+            render(`
+                <div class="card">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>正在分析你的性格类型...</p>
+                    </div>
+                </div>
+            `);
+
+            try {
+                const res = await fetch(API_BASE + "/api/submit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ answers: answers })
+                });
+                const json = await res.json();
+                if (json.code === 0) {
+                    showResult(json.data);
+                } else {
+                    throw new Error(json.message || "计算失败");
+                }
+            } catch (e) {
+                render(`
+                    <div class="card">
+                        <div class="start-page">
+                            <p style="color:#d63031;">结果获取失败: ${e.message}</p>
+                            <button class="btn-retry" style="margin-top:16px;" onclick="startTest()">重新测试</button>
+                        </div>
+                    </div>
+                `);
+            }
+        }
+
+        // 显示结果
+        function showResult(data) {
+            const info = data.info;
+            const traitsHtml = (info.traits || []).map(t => `<span class="trait-tag">${t}</span>`).join("");
+            const suitableHtml = (info.suitable || []).map(s => `<span class="suitable-tag">${s}</span>`).join("");
+
+            render(`
+                <div class="card">
+                    <div class="result-page">
+                        <div class="result-type">${data.type}</div>
+                        <div class="result-title">${info.title}</div>
+                        <div class="result-desc">${info.description}</div>
+                        <div class="result-section">
+                            <h3>关键特质</h3>
+                            <div class="traits">${traitsHtml}</div>
+                        </div>
+                        <div class="result-section">
+                            <h3>适合职业</h3>
+                            <div class="suitable-list">${suitableHtml}</div>
+                        </div>
+                        <button class="btn-retry" onclick="startTest()">重新测试</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // 入口
+        loadQuestions().then(() => showStart());
+    </script>
+</body>
+</html>
